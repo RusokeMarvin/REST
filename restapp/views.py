@@ -1,6 +1,6 @@
 from django.shortcuts import render
-from .models import Post,Shoe
-from .serializers import PostSerializer,ShoeSerializer
+from .models import Post,Tag
+from .serializers import PostSerializer
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 
@@ -8,9 +8,10 @@ from rest_framework.decorators import api_view
 
 
 @api_view(['GET','POST'])  
-def PostsView(request):
+def PostsView(request,tag_name):
     if request.method == 'GET':
-        posts= Post.objects.all() #queryset
+        tag = Tag.objects.get(name=tag_name)
+        posts= Post.objects.filter(tag=tag) #queryset
         serializer=PostSerializer(posts,many=True) #many is put to True if we have .all(if you have a querySet) in the posts
         return Response(serializer.data)
     
@@ -44,41 +45,14 @@ def Post_details(request,pk):
         posts.delete()
         return Response(status=204)
 
-#SHOE VIEWS
+'''@api_view(['GET'])
+def Search(request,title):
+    data= Post.objects.get(title= title)
+    serializer=PostSerializer(data)
+    return Response(serializer.data)'''
 
-@api_view(['GET','POST'])  
-def ShoesView(request):
-    if request.method == 'GET':
-        shoes= Shoe.objects.all() #queryset
-        serializer=ShoeSerializer(shoes,many=True) #many is put to True if we have .all(if you have a querySet) in the posts
-        return Response(serializer.data)
-    
-    elif request.method == 'POST':
-        serializer = ShoeSerializer(data = request.data)
-
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=201) #status means data is created
-        else:
-            return Response(serializer.errors,status=400)
-
-@api_view(['GET','PUT','DELETE'])       
-def Shoe_details(request,pk):
-    try:
-        shoes=Shoe.objects.get(pk=pk)
-    except shoes.DoesNotExist:
-        return Response(status=404)
-    
-    if request.method == 'GET':
-        serializer = PostSerializer(shoes)
-        return Response(serializer.data)
-    if request.method == 'PUT':
-        serializer=PostSerializer(shoes,data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data,status=201)
-        else:
-            return Response(serializer.errors,status=400)
-    if request.method == 'DELETE':
-        shoes.delete()
-        return Response(status=204)
+@api_view(['GET'])
+def Search(request,title):
+    data= Post.objects.filter(title__icontains= title)
+    serializer=PostSerializer(data,many=True)
+    return Response(serializer.data)

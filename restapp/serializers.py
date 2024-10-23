@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Post,Shoe
+from .models import Post,Tag
 
 '''class PostSerializer(serializers.Serializer):
     title = serializers.CharField(max_length=150)
@@ -19,7 +19,3 @@ class PostSerializer(serializers.ModelSerializer):
         model = Post
         fields = ['title','email','author']
 
-class ShoeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Shoe
-        fields = ['title','email','author']
