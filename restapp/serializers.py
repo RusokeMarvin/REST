@@ -17,5 +17,5 @@ from .models import Post,Tag
 class PostSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
-        fields = ['title','email','author']
+        fields = ['title','email','author','cost']
 
